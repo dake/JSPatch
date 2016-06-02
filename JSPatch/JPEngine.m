@@ -79,7 +79,7 @@ void (^_exceptionBlock)(NSString *log) = ^void(NSString *log) {
 
 + (void)startEngine
 {
-    if (![JSContext class] || _context) {
+    if (Nil == JSContext.class || nil != _context) {
         return;
     }
     
@@ -284,17 +284,21 @@ void (^_exceptionBlock)(NSString *log) = ^void(NSString *log) {
 
 + (JSContext *)context
 {
+    if (nil == _context) {
+        [self startEngine];
+    }
     return _context;
 }
 
+// FIXME: extension to register in Engine
 + (void)addExtensions:(NSArray *)extensions
 {
-    if (![JSContext class]) {
+    if (nil == self.context) {
+        _exceptionBlock(@"please call [JPEngine startEngine]");
         return;
     }
-    if (!_context) _exceptionBlock(@"please call [JPEngine startEngine]");
-    for (NSString *className in extensions) {
-        Class extCls = NSClassFromString(className);
+    
+    for (Class extCls in extensions) {
         [extCls main:_context];
     }
 }
@@ -1656,7 +1660,7 @@ static id _unboxOCObjectToJS(id obj)
 
 + (id)formatOCToJS:(id)obj
 {
-    return [[JSContext currentContext][@"_formatOCToJS"] callWithArguments:@[formatOCToJS(obj)]];
+    return formatOCToJS(obj);
 }
 
 + (int)sizeOfStructTypes:(NSString *)structTypes
