@@ -34,7 +34,6 @@ void (^JPLogger)(NSString *log);
         NSString *libraryDirectory = [NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES) firstObject];
         NSString *scriptPath = [libraryDirectory stringByAppendingPathComponent:[NSString stringWithFormat:@"JSPatch/%@/%@", appVersion, filePath]];
         if ([[NSFileManager defaultManager] fileExistsAtPath:scriptPath]) {
-            [JPEngine startEngine];
             [JPEngine evaluateScriptWithPath:scriptPath];
         }
     };
@@ -73,7 +72,6 @@ void (^JPLogger)(NSString *log);
     NSString *scriptPath = [scriptDirectory stringByAppendingPathComponent:@"main.js"];
     
     if ([[NSFileManager defaultManager] fileExistsAtPath:scriptPath]) {
-        [JPEngine startEngine];
         [JPEngine addExtensions:@[@"JPLoaderInclude"]];
         [JPEngine evaluateScriptWithPath:scriptPath];
         if (JPLogger) JPLogger([NSString stringWithFormat:@"JSPatch: evaluated script %@", scriptPath]);
@@ -207,7 +205,6 @@ void (^JPLogger)(NSString *log);
 
 + (void)runTestScriptInBundle
 {
-    [JPEngine startEngine];
     [JPEngine addExtensions:@[@"JPLoaderTestInclude"]];
     
     NSString *path = [[NSBundle bundleForClass:[self class]] pathForResource:@"main" ofType:@"js"];
