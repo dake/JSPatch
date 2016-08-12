@@ -1583,7 +1583,7 @@ static NSString *extractStructName(NSString *typeEncodeString)
     NSString *typeString = array[0];
     int firstValidIndex = 0;
     for (int i = 0; i< typeString.length; i++) {
-        char c = [typeString characterAtIndex:i];
+        unichar c = [typeString characterAtIndex:i];
         if (c == '{' || c=='_') {
             firstValidIndex++;
         }else {
