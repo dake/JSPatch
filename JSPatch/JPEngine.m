@@ -279,7 +279,7 @@ void (^_exceptionBlock)(NSString *log) = ^void(NSString *log) {
         _exceptionBlock([NSString stringWithFormat:@"js exception: %@", exception]);
     };
     
-    _nullObj = [[NSObject alloc] init];
+    _nullObj = [NSNull null];
     context[@"_OC_null"] = formatOCToJS(_nullObj);
     
     _context = context;
@@ -1631,12 +1631,14 @@ static id formatOCToJS(id obj)
 static id formatJSToOC(JSValue *jsval)
 {
     id obj = [jsval toObject];
-    if (!obj || [obj isKindOfClass:[NSNull class]]) return _nilObj;
+    if (nil == obj) {
+        return _nilObj;
+    }
     
     if ([obj isKindOfClass:[JPBoxing class]]) return [obj unbox];
     if ([obj isKindOfClass:[NSArray class]]) {
-        NSMutableArray *newArr = [[NSMutableArray alloc] init];
-        for (int i = 0; i < [(NSArray*)obj count]; i ++) {
+        NSMutableArray *newArr = [NSMutableArray array];
+        for (NSInteger i = 0; i < [(NSArray*)obj count]; i ++) {
             [newArr addObject:formatJSToOC(jsval[i])];
         }
         return newArr;
@@ -1650,7 +1652,7 @@ static id formatJSToOC(JSValue *jsval)
         if (obj[@"__isBlock"]) {
             return genCallbackBlock(jsval);
         }
-        NSMutableDictionary *newDict = [[NSMutableDictionary alloc] init];
+        NSMutableDictionary *newDict = [NSMutableDictionary dictionary];
         for (NSString *key in [obj allKeys]) {
             [newDict setObject:formatJSToOC(jsval[key]) forKey:key];
         }
