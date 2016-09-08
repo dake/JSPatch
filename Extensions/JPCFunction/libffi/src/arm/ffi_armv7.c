@@ -186,7 +186,7 @@ int ffi_prep_args_VFP(char *stack, extended_cif *ecif, float *vfp_space)
        (i != 0);
        i--, p_arg++, p_argv++)
     {
-      is_vfp_type = vfp_type_p (*p_arg);
+      is_vfp_type = (char)vfp_type_p (*p_arg);
 
       /* Allocated in VFP registers. */
       if(vi < ecif->cif->vfp_nargs && is_vfp_type)
@@ -476,7 +476,7 @@ ffi_prep_incoming_args_VFP(char *stack, void **rvalue,
   for (i = cif->nargs, p_arg = cif->arg_types; (i != 0); i--, p_arg++)
     {
     size_t z;
-    is_vfp_type = vfp_type_p (*p_arg); 
+    is_vfp_type = (char)vfp_type_p (*p_arg);
 
     if(vi < cif->vfp_nargs && is_vfp_type)
       {
@@ -631,7 +631,7 @@ ffi_trampoline_table_alloc ()
 
     /* We have valid trampoline and config pages */
     table = calloc (1, sizeof(ffi_trampoline_table));
-    table->free_count = FFI_TRAMPOLINE_COUNT;
+    table->free_count = (uint16_t)FFI_TRAMPOLINE_COUNT;
     table->config_page = config_page;
     table->trampoline_page = trampoline_page;
 
@@ -860,7 +860,7 @@ static int vfp_type_p (ffi_type *t)
       if (t->type == FFI_TYPE_STRUCT)
 	{
 	  if (elnum == 1)
-	    t->type = elt;
+	    t->type = (unsigned short)elt;
 	  else
 	    t->type = (elt == FFI_TYPE_FLOAT
 		       ? FFI_TYPE_STRUCT_VFP_FLOAT
@@ -894,7 +894,7 @@ static int place_vfp_arg (ffi_cif *cif, ffi_type *t)
 	}
       /* Found regs to allocate. */
       cif->vfp_used |= new_used;
-      cif->vfp_args[cif->vfp_nargs++] = reg;
+      cif->vfp_args[cif->vfp_nargs++] = (char)reg;
 
       /* Update vfp_reg_free. */
       if (cif->vfp_used & (1 << cif->vfp_reg_free))
